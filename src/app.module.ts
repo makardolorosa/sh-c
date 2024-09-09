@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { OrdersModule } from './orders/orders.module';
+//import { OrdersModule } from './order/orders.module';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -11,7 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       'mongodb+srv://antonenkomakar123:KQ6LdnQK7FK6aE7z@cluster0.mmmhp.mongodb.net/',
     ),
     UserModule,
-    OrdersModule,
+    //OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
