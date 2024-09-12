@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { Cart } from 'src/cart/cart.schema';
 
 export class createUserdto {
   @IsNotEmpty()
@@ -12,4 +13,7 @@ export class createUserdto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @ValidateNested()
+  userCart: Cart;
 }

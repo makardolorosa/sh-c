@@ -14,6 +14,8 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: false })
+  cartId: string;
   // @Prop()
   // id: string;
 }

@@ -1,13 +1,20 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { itemDto } from './cart-item.dto';
 
 export class createCartdto {
   @IsNotEmpty()
   @IsString()
-  UserId: string;
+  userId: string;
 
+  @ValidateNested({ each: true })
+  //@Type(() => ItemDto)
   items: itemDto[];
 
   @IsNumber()
-  totalprice: number;
+  totalPrice: number;
 }
