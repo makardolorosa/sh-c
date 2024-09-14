@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Cart } from 'src/cart/cart.schema';
 
 export type UserDocument = User & Document;
 
@@ -15,7 +16,7 @@ export class User {
   password: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: false })
-  cartId: string;
+  userCart?: Cart;
   // @Prop()
   // id: string;
 }
