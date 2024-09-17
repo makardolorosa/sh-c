@@ -4,6 +4,7 @@ import { Cart } from './cart.schema';
 import { Model } from 'mongoose';
 import { User } from 'src/user/user.schema';
 import { createCartdto } from './dtos/create-cart.dto';
+import { itemDto } from './dtos/cart-item.dto';
 //import { itemDto } from './dtos/cart-item.dto';
 //import { createCartdto } from './dtos/create-cart.dto';
 
@@ -33,7 +34,17 @@ export class CartService {
     return savedCart;
   }
 
-  // async updateCart(id:string, item: itemDto) {
-  //   this.cartModel.update
-  // }
+  async updateCart(id: string, item: itemDto) {
+    const cart = await this.cartModel.findOne({ id });
+    const itemIndex = cart.items.findIndex(
+      (exactItem) => exactItem.productId === item.productId,
+    );
+    if (itemIndex > -1) {
+      cart.items[itemIndex].quantity += item.quantity;
+    } else {
+      cart.items.push(item);
+    }
+    console.log(cart);
+    return await cart.save();
+  }
 }

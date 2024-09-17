@@ -23,10 +23,11 @@ export class CartController {
     this.cartService.createCart(createCartDto);
   }
 
-  @Patch('id')
+  @Patch(':id')
   @UsePipes(new ValidationPipe())
   updateCartById(@Param('id') id: string, @Body() updateItemCart: itemDto) {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException('Invalid ID', 400);
+    return this.cartService.updateCart(id, updateItemCart);
   }
 }
