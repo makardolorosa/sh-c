@@ -35,16 +35,27 @@ export class CartService {
   }
 
   async updateCart(id: string, item: itemDto) {
-    const cart = await this.cartModel.findOne({ id });
-    const itemIndex = cart.items.findIndex(
+    const tempItems = (await this.cartModel.findOne({ id })).items;
+    const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productId === item.productId,
     );
-    if (itemIndex > -1) {
-      cart.items[itemIndex].quantity += item.quantity;
+
+    if (itemIndex !== -1) {
+      tempItems[itemIndex].quantity += item.quantity;
+      if (tempItems[itemIndex].quantity < 0) tempItems[itemIndex].quantity = 0;
     } else {
-      cart.items.push(item);
+      tempItems.push(item);
     }
-    console.log(cart);
-    return await cart.save();
+    const result = tempItems.filter(
+      (existedItems) => existedItems.quantity > 0,
+    );
+
+    console.log(result);
+    const newCart = this.cartModel.findOneAndUpdate(
+      { userId: id },
+      { items: result },
+      { new: true },
+    );
+    return newCart;
   }
 }
