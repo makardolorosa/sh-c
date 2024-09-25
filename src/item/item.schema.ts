@@ -5,7 +5,7 @@ export type ProductDocument = Item & Document;
 
 @Schema()
 export class Item {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   productArticle: string;
 
   @Prop()
