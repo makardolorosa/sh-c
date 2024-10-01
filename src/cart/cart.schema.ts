@@ -8,7 +8,7 @@ export class Cart {
   @Prop({ required: true })
   userId: string;
 
-  @Prop({ type: Number, default: 0 })
+  @Prop({ type: Number })
   totalPrice: number;
 
   @Prop([{ type: itemDto, required: false }])

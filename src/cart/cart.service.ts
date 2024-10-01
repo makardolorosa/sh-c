@@ -35,16 +35,9 @@ export class CartService {
 
     return savedCart;
   }
-  async updateCurrentTotalPrice(cart: Cart) {
-    cart.items.forEach(async (item) => {
-      const TempArt = item.productArticle;
-      const tempItem = await this.itemModel.findOne({ TempArt });
-      cart.totalPrice = cart.totalPrice + tempItem.itemPrice;
-    });
-  }
 
   async updateCart(UserId: string, item: itemDto) {
-    const tempItems = (await this.cartModel.findOne({ UserId })).items;
+    const tempItems = (await this.cartModel.findOne({ userId: UserId })).items;
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
@@ -59,11 +52,18 @@ export class CartService {
       (existedItems) => existedItems.quantity > 0,
     );
 
-    const newSum =
-      (await this.cartModel.findOne({ UserId })).totalPrice +
-      item.quantity *
-        (await this.itemModel.findOne({ productArticle: item.productArticle }))
-          .itemPrice;
+    let newSum = 0;
+    tempItems.forEach(async (item) => {
+      newSum =
+        newSum +
+        item.quantity *
+          (
+            await this.itemModel.findOne({
+              productArticle: item.productArticle,
+            })
+          ).itemPrice;
+      console.log(newSum);
+    });
 
     console.log(result);
     const newCart = this.cartModel.findOneAndUpdate(
