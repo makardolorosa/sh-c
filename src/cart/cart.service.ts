@@ -41,29 +41,58 @@ export class CartService {
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
-
+    const oldSum = (await this.cartModel.findOne({ userId: UserId }))
+      .totalPrice;
+    let newSum = oldSum;
     if (itemIndex !== -1) {
       tempItems[itemIndex].quantity += item.quantity;
-      if (tempItems[itemIndex].quantity < 0) tempItems[itemIndex].quantity = 0;
-    } else {
-      tempItems.push(item);
-    }
-    const result = tempItems.filter(
-      (existedItems) => existedItems.quantity > 0,
-    );
-
-    let newSum = 0;
-    tempItems.forEach(async (item) => {
       newSum =
-        newSum +
+        oldSum +
         item.quantity *
           (
             await this.itemModel.findOne({
               productArticle: item.productArticle,
             })
           ).itemPrice;
-      console.log(newSum);
-    });
+
+      if (tempItems[itemIndex].quantity < 0) {
+        const tempQuant = tempItems[itemIndex].quantity;
+        newSum =
+          oldSum +
+          tempQuant *
+            (
+              await this.itemModel.findOne({
+                productArticle: item.productArticle,
+              })
+            ).itemPrice;
+        tempItems[itemIndex].quantity = 0;
+      }
+    } else {
+      tempItems.push(item);
+      newSum =
+        oldSum +
+        item.quantity *
+          (
+            await this.itemModel.findOne({
+              productArticle: item.productArticle,
+            })
+          ).itemPrice;
+    }
+    const result = tempItems.filter(
+      (existedItems) => existedItems.quantity > 0,
+    );
+
+    // tempItems.forEach(async (item) => {
+    //   newSum =
+    //     newSum +
+    //     item.quantity *
+    //       (
+    //         await this.itemModel.findOne({
+    //           productArticle: item.productArticle,
+    //         })
+    //       ).itemPrice;
+    //   console.log(newSum);
+    // });
 
     console.log(result);
     const newCart = this.cartModel.findOneAndUpdate(
