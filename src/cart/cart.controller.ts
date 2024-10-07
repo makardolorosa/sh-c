@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   HttpException,
   Param,
   Patch,
@@ -30,5 +32,23 @@ export class CartController {
     if (!isValid) throw new HttpException('Invalid ID', 400);
 
     return this.cartService.updateCart(id, updateItemCart);
+  }
+
+  @Get(':id')
+  @UsePipes(new ValidationPipe())
+  getCartById(@Param('id') id: string) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException('Invalid ID', 400);
+    console.log(id);
+    return this.cartService.getCartInfo(id);
+  }
+
+  @Delete(':id')
+  @UsePipes(new ValidationPipe())
+  deleteCartById(@Param() userId: string) {
+    const isValid = mongoose.Types.ObjectId.isValid(userId);
+    if (!isValid) throw new HttpException('Invalid ID', 400);
+    console.log(userId);
+    return this.cartService.deleteCart(userId);
   }
 }

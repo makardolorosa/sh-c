@@ -36,12 +36,14 @@ export class CartService {
     return savedCart;
   }
 
-  async updateCart(UserId: string, item: itemDto) {
-    const tempItems = (await this.cartModel.findOne({ userId: UserId })).items;
+  async updateCart(userId: string, item: itemDto) {
+    const tempItems = (await this.cartModel.findOne({ userId: userId })).items;
+    if (!tempItems) throw new HttpException('User not found', 404);
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
-    const oldSum = (await this.cartModel.findOne({ userId: UserId }))
+    if (!itemIndex) throw new HttpException('Item article not found', 403);
+    const oldSum = (await this.cartModel.findOne({ userId: userId }))
       .totalPrice;
     let newSum = oldSum;
     if (itemIndex !== -1) {
@@ -96,7 +98,7 @@ export class CartService {
 
     console.log(result);
     const newCart = this.cartModel.findOneAndUpdate(
-      { userId: UserId },
+      { userId: userId },
       { items: result, totalPrice: newSum },
       { new: true },
     );
@@ -104,5 +106,28 @@ export class CartService {
     // this.updateCurrentTotalPrice(await newCart);
     console.log(newCart);
     return newCart;
+  }
+
+  async getCartInfo(userId: string) {
+    const cart = await this.cartModel.findOne({ userId: userId });
+    return cart;
+  }
+
+  async deleteCart(userid: string) {
+    const deletedCart = await this.cartModel.findOneAndDelete({
+      userId: userid,
+    });
+    console.log(deletedCart);
+    const createdCart = new this.cartModel(userid);
+    const savedCart = await createdCart.save();
+
+    const findUser = await this.userModel.findById(userid);
+    await findUser.updateOne({
+      $set: {
+        userCart: savedCart,
+      },
+    });
+
+    return findUser;
   }
 }
