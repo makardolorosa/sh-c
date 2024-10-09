@@ -39,6 +39,7 @@ export class CartService {
   async updateCart(userId: string, item: itemDto) {
     const tempItems = (await this.cartModel.findOne({ userId: userId })).items;
     if (!tempItems) throw new HttpException('User not found', 404);
+
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
