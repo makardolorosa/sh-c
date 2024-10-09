@@ -22,7 +22,7 @@ export class CartController {
   @Post()
   @UsePipes(new ValidationPipe())
   createCart(@Body() createCartDto: createCartdto) {
-    this.cartService.createCart(createCartDto);
+    return this.cartService.createCart(createCartDto);
   }
 
   @Patch(':id')
@@ -40,15 +40,16 @@ export class CartController {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException('Invalid ID', 400);
     console.log(id);
+
     return this.cartService.getCartInfo(id);
   }
 
   @Delete(':id')
   @UsePipes(new ValidationPipe())
-  deleteCartById(@Param() userId: string) {
+  deleteCartById(@Param('id') userId: string) {
     const isValid = mongoose.Types.ObjectId.isValid(userId);
     if (!isValid) throw new HttpException('Invalid ID', 400);
-    console.log(userId);
+
     return this.cartService.deleteCart(userId);
   }
 }

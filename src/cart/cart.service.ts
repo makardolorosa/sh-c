@@ -42,9 +42,11 @@ export class CartService {
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
+
     if (!itemIndex) throw new HttpException('Item article not found', 403);
     const oldSum = (await this.cartModel.findOne({ userId: userId }))
       .totalPrice;
+
     let newSum = oldSum;
     if (itemIndex !== -1) {
       tempItems[itemIndex].quantity += item.quantity;
@@ -80,53 +82,43 @@ export class CartService {
             })
           ).itemPrice;
     }
+
     const result = tempItems.filter(
       (existedItems) => existedItems.quantity > 0,
     );
 
-    // tempItems.forEach(async (item) => {
-    //   newSum =
-    //     newSum +
-    //     item.quantity *
-    //       (
-    //         await this.itemModel.findOne({
-    //           productArticle: item.productArticle,
-    //         })
-    //       ).itemPrice;
-    //   console.log(newSum);
-    // });
-
-    console.log(result);
     const newCart = this.cartModel.findOneAndUpdate(
       { userId: userId },
       { items: result, totalPrice: newSum },
       { new: true },
     );
 
-    // this.updateCurrentTotalPrice(await newCart);
-    console.log(newCart);
     return newCart;
   }
 
   async getCartInfo(userId: string) {
     const cart = await this.cartModel.findOne({ userId: userId });
+
     return cart;
   }
 
   async deleteCart(userid: string) {
-    const deletedCart = await this.cartModel.findOneAndDelete({
+    console.log(userid);
+
+    await this.cartModel.findOneAndDelete({
       userId: userid,
     });
-    console.log(deletedCart);
-    const createdCart = new this.cartModel(userid);
+
+    const tempCart = new createCartdto();
+    tempCart.userId = userid;
+    const createdCart = new this.cartModel(tempCart);
     const savedCart = await createdCart.save();
 
-    const findUser = await this.userModel.findById(userid);
-    await findUser.updateOne({
-      $set: {
-        userCart: savedCart,
-      },
-    });
+    const findUser = await this.userModel.findByIdAndUpdate(
+      userid,
+      { userCart: savedCart },
+      { new: true },
+    );
 
     return findUser;
   }
