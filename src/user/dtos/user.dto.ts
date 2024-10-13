@@ -15,5 +15,5 @@ export class createUserdto {
   password: string;
 
   @ValidateNested()
-  userCart: Cart;
+  userCart?: Cart;
 }

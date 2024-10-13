@@ -23,6 +23,8 @@ export class User {
   userOrders?: Order[];
   // @Prop()
   // id: string;
+  @Prop({ required: false })
+  userAdress?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
