@@ -6,7 +6,7 @@ import { User } from 'src/user/user.schema';
 import { createOrderDto } from './dtos/create-order.dto';
 import { Order } from './order.schema';
 import { orderStatus } from 'src/enums/enum.order.status';
-import { createCartdto } from 'src/cart/dtos/create-cart.dto';
+import { itemDto } from 'src/cart/dtos/cart-item.dto';
 
 @Injectable()
 export class OrderService {
@@ -23,22 +23,19 @@ export class OrderService {
     if (findUser.userCart.items.length === 0)
       throw new HttpException('Cart is empty', 403);
 
-    const setOrderCart = (await this.userModel.findById(id)).userCart;
     const newOrder = await new this.orderModule({
       userId: id,
       orderAdress: orderDto.orderAdress,
-      orderCart: setOrderCart,
+      orderCart: findUser.userCart.items,
+      orderTotalPrice: findUser.userCart.totalPrice,
       orderCurrentStatus: orderStatus.pending,
+      isActive: true,
     });
 
-    const tempCart = new createCartdto();
-    tempCart.userId = id;
-    const createdCart = new this.cartModel(tempCart);
-    const savedCart = await createdCart.save();
-
-    findUser.updateOne(
-      { userCart: savedCart, $push: { userOrders: newOrder } },
-      { new: true },
+    findUser.updateOne({ $push: { userOrders: newOrder } }, { new: true });
+    await this.cartModel.findOneAndUpdate(
+      { userId: id },
+      { items: new itemDto() },
     );
 
     if (orderDto.saveAdress)
@@ -62,5 +59,9 @@ export class OrderService {
     );
 
     return updatedOrder;
+  }
+
+  async getOrder(userid: string) {
+    const fin;
   }
 }

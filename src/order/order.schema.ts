@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Cart } from 'src/cart/cart.schema';
+import { itemDto } from 'src/cart/dtos/cart-item.dto';
 import { orderStatus } from 'src/enums/enum.order.status';
 
 export type UserDocument = Order & Document;
@@ -10,15 +9,20 @@ export class Order {
   @Prop({ required: true })
   userId: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: false })
-  orderCart?: Cart;
+  @Prop([{ type: itemDto, required: false }])
+  items?: itemDto[];
+
+  @Prop({ type: Number })
+  orderTotalPrice: number;
 
   @Prop({ type: String, enum: Object.values(orderStatus) })
   orderCurrentStatus: orderStatus;
-  // @Prop()
-  // id: string;
+
   @Prop({ required: true })
   orderAdress: string;
+
+  @Prop({ type: Boolean })
+  isActive: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(Order);
