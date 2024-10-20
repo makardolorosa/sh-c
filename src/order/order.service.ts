@@ -45,23 +45,45 @@ export class OrderService {
     return newOrder.save();
   }
 
-  async updateOrderStatus(newStatus: orderStatus, userid: string) {
-    const findUser = await this.userModel.findById(userid);
-    if (!findUser) throw new HttpException('User not found', 404);
+  async updateOrderStatus(newStatus: orderStatus, orderId: string) {
+    // const findUser = await this.userModel.findById(userid);
+    // if (!findUser) throw new HttpException('User not found', 404);
 
-    if (findUser.userCart.items.length === 0)
-      throw new HttpException('Cart is empty', 400);
+    // if (findUser.userCart.items.length === 0)
+    //   throw new HttpException('Cart is empty', 400);
 
-    const updatedOrder = this.orderModule.findOneAndUpdate(
-      { userId: userid },
-      { $set: { orderStatus: newStatus } },
+    let isActiveFlag = true;
+    if (newStatus === orderStatus.shipped) isActiveFlag = false;
+
+    const updatedOrder = await this.orderModule.findByIdAndUpdate(
+      orderId,
+      { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
       { new: true },
     );
 
     return updatedOrder;
   }
 
-  async getOrder(userid: string) {
-    const fin;
+  async getUserOrders(userid: string) {
+    const findUser = await this.orderModule.findById(userid);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    const findOrders = (await this.userModel.findById(userid)).userOrders;
+    return findOrders;
+  }
+
+  async getOrderById(orderId: string) {
+    const findOrder = await this.orderModule.findById(orderId);
+    if (!findOrder) throw new HttpException('User not found', 404);
+
+    return findOrder;
+  }
+
+  async deleteOrder(orderId: string) {
+    const findOrder = await this.orderModule.findById(orderId);
+    if (!findOrder) throw new HttpException('User not found', 404);
+
+    const deletedOrder = await this.orderModule.findByIdAndDelete(orderId);
+    return deletedOrder;
   }
 }

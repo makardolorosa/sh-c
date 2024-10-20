@@ -21,7 +21,7 @@ export class Order {
   @Prop({ required: true })
   orderAdress: string;
 
-  @Prop({ type: Boolean })
+  @Prop({ type: Boolean, default: true })
   isActive: boolean;
 }
 
