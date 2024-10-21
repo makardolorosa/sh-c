@@ -7,5 +7,5 @@ export class createOrderDto {
 
   @IsBoolean()
   @IsOptional()
-  saveAdress?: bool;
+  saveAdress?: boolean;
 }

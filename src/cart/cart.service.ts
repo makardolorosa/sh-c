@@ -37,7 +37,7 @@ export class CartService {
   }
 
   async updateCart(userId: string, item: itemDto) {
-    const tempItems = (await this.userModel.findById(userId)).userCart.items;
+    const tempItems = (await this.cartModel.findOne({ userId: userId })).items;
     if (!tempItems) throw new HttpException('User not found', 404);
 
     const itemIndex = tempItems.findIndex(
@@ -45,7 +45,8 @@ export class CartService {
     );
 
     if (!itemIndex) throw new HttpException('Item article not found', 403);
-    const oldSum = (await (await this.userModel.findById(userId)).userCart.totalPrice;
+    const oldSum = (await this.cartModel.findOne({ userId: userId }))
+      .totalPrice;
 
     let newSum = oldSum;
     if (itemIndex !== -1) {
