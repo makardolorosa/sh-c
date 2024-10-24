@@ -8,10 +8,10 @@ export class Cart {
   @Prop({ required: true })
   userId: string;
 
-  @Prop({ type: Number })
+  @Prop({ type: Number, default: 0 })
   totalPrice: number;
 
-  @Prop([{ type: itemDto, required: false }])
+  @Prop([{ type: itemDto, required: false, default: new itemDto() }])
   items?: itemDto[];
 }
 
