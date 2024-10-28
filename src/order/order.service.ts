@@ -11,7 +11,7 @@ import { itemDto } from 'src/cart/dtos/cart-item.dto';
 @Injectable()
 export class OrderService {
   constructor(
-    @InjectModel(Order.name) private orderModule: Model<Order>,
+    @InjectModel(Order.name) private orderModel: Model<Order>,
     @InjectModel(Cart.name) private cartModel: Model<Cart>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
@@ -20,22 +20,30 @@ export class OrderService {
     const findUser = await this.userModel.findById(id);
     if (!findUser) throw new HttpException('User not found', 404);
 
-    if (findUser.userCart.items.length === 0)
+    // if (findUser.userCart.items.length === 0)
+    if ((await this.cartModel.findOne({ userId: id })).items.length === 0)
       throw new HttpException('Cart is empty', 403);
+    console.log(findUser);
+    console.log(await this.cartModel.findById(findUser.userCart));
+    const orderItemsList = (await this.cartModel.findById(findUser.userCart))
+      .items;
+    console.log(orderItemsList);
+    const orderTotalprice = (await this.cartModel.findById(findUser.userCart))
+      .totalPrice;
 
-    const newOrder = await new this.orderModule({
+    const newOrder = await new this.orderModel({
       userId: id,
       orderAdress: orderDto.orderAdress,
-      orderCart: findUser.userCart.items,
-      orderTotalPrice: findUser.userCart.totalPrice,
+      orderCart: orderItemsList,
+      orderTotalPrice: orderTotalprice,
       orderCurrentStatus: orderStatus.pending,
       isActive: true,
     });
 
-    findUser.updateOne({ $push: { userOrders: newOrder } }, { new: true });
+    findUser.updateOne({ $push: { userOrders: newOrder } });
     await this.cartModel.findOneAndUpdate(
       { userId: id },
-      { items: new itemDto() },
+      { $set: { items: new itemDto() } },
     );
 
     if (orderDto.saveAdress)
@@ -55,7 +63,7 @@ export class OrderService {
     let isActiveFlag = true;
     if (newStatus === orderStatus.shipped) isActiveFlag = false;
 
-    const updatedOrder = await this.orderModule.findByIdAndUpdate(
+    const updatedOrder = await this.orderModel.findByIdAndUpdate(
       orderId,
       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
       { new: true },
@@ -65,7 +73,7 @@ export class OrderService {
   }
 
   async getUserOrders(userid: string) {
-    const findUser = await this.orderModule.findById(userid);
+    const findUser = await this.orderModel.findById(userid);
     if (!findUser) throw new HttpException('User not found', 404);
 
     const findOrders = (await this.userModel.findById(userid)).userOrders;
@@ -73,17 +81,17 @@ export class OrderService {
   }
 
   async getOrderById(orderId: string) {
-    const findOrder = await this.orderModule.findById(orderId);
+    const findOrder = await this.orderModel.findById(orderId);
     if (!findOrder) throw new HttpException('User not found', 404);
 
     return findOrder;
   }
 
   async deleteOrder(orderId: string) {
-    const findOrder = await this.orderModule.findById(orderId);
+    const findOrder = await this.orderModel.findById(orderId);
     if (!findOrder) throw new HttpException('User not found', 404);
 
-    const deletedOrder = await this.orderModule.findByIdAndDelete(orderId);
+    const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
     return deletedOrder;
   }
 }

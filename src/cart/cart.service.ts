@@ -78,6 +78,7 @@ export class CartService {
             ).itemPrice;
       }
     } else {
+      if (itemIndex === -1) throw new HttpException('Bad request', 402);
       if (tempItems[itemIndex].quantity + item.quantity < 0) {
         newSum =
           oldSum -
@@ -88,6 +89,16 @@ export class CartService {
               })
             ).itemPrice;
         tempItems[itemIndex].quantity += item.quantity;
+      } else {
+        tempItems[itemIndex].quantity += item.quantity;
+        newSum =
+          oldSum +
+          item.quantity *
+            (
+              await this.itemModel.findOne({
+                productArticle: item.productArticle,
+              })
+            ).itemPrice;
       }
     }
 

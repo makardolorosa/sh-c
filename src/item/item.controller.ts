@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UsePipes,
   ValidationPipe,
@@ -16,5 +17,10 @@ export class ItemController {
   @UsePipes(new ValidationPipe())
   uploadProducts(@Body() itemsList: UploadItemDto[]) {
     return this.itemService.uploadProducts(itemsList);
+  }
+
+  @Get()
+  getItemsList() {
+    return this.itemService.getItemList();
   }
 }

@@ -14,4 +14,8 @@ export class ItemService {
       await uploadedItem.save();
     });
   }
+
+  async getItemList() {
+    return this.itemModel.find();
+  }
 }

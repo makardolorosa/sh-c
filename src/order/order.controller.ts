@@ -40,7 +40,7 @@ export class OrderController {
     return this.orderService.getUserOrders(userId);
   }
 
-  @Get('/orderId/:orderId')
+  @Get('/checkOrder/:orderId')
   @UsePipes(new ValidationPipe())
   async getOrderbyId(@Param('orderId') orderId: string) {
     const isValid = mongoose.Types.ObjectId.isValid(orderId);
@@ -49,7 +49,7 @@ export class OrderController {
     return this.orderService.getOrderById(orderId);
   }
 
-  @Patch('/orderId/:orderId')
+  @Patch('/updateOrder/:orderId')
   @UsePipes(new ValidationPipe())
   async updateOrderstatus(
     @Param('orderId') orderId: string,
