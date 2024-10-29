@@ -21,29 +21,32 @@ export class OrderService {
     if (!findUser) throw new HttpException('User not found', 404);
 
     // if (findUser.userCart.items.length === 0)
-    if ((await this.cartModel.findOne({ userId: id })).items.length === 0)
-      throw new HttpException('Cart is empty', 403);
+    // if ((await this.cartModel.findOne({ userId: id })).items.length === 0)
+    //   throw new HttpException('Cart is empty', 403);
     console.log(findUser);
-    console.log(await this.cartModel.findById(findUser.userCart));
-    const orderItemsList = (await this.cartModel.findById(findUser.userCart))
-      .items;
+    const orderCart = await this.cartModel.findById(findUser.userCart);
+    console.log(orderCart);
+    const orderItemsList = orderCart.items;
     console.log(orderItemsList);
-    const orderTotalprice = (await this.cartModel.findById(findUser.userCart))
-      .totalPrice;
+    const orderTotalprice = orderCart.totalPrice;
 
     const newOrder = await new this.orderModel({
       userId: id,
       orderAdress: orderDto.orderAdress,
-      orderCart: orderItemsList,
+      items: orderItemsList,
       orderTotalPrice: orderTotalprice,
       orderCurrentStatus: orderStatus.pending,
       isActive: true,
     });
 
-    findUser.updateOne({ $push: { userOrders: newOrder } });
+    newOrder.save();
+
+    //newOrder.updateOne({ $set: { items: orderItemsList } });
+
+    this.userModel.findByIdAndUpdate(id, { $push: { userOrders: newOrder } });
     await this.cartModel.findOneAndUpdate(
       { userId: id },
-      { $set: { items: new itemDto() } },
+      { $set: { items: new itemDto(), totalPrice: 0 } },
     );
 
     if (orderDto.saveAdress)
