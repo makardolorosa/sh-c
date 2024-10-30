@@ -39,40 +39,71 @@ export class OrderService {
       isActive: true,
     });
 
-    newOrder.save();
+    const savedOrder = await newOrder.save();
 
     //newOrder.updateOne({ $set: { items: orderItemsList } });
 
-    this.userModel.findByIdAndUpdate(id, { $push: { userOrders: newOrder } });
+    await this.userModel.findByIdAndUpdate(
+      id,
+      { $push: { userOrders: savedOrder } },
+      { new: true },
+    );
+
     await this.cartModel.findOneAndUpdate(
       { userId: id },
       { $set: { items: new itemDto(), totalPrice: 0 } },
     );
 
     if (orderDto.saveAdress)
-      this.userModel.findByIdAndUpdate(id, {
+      await this.userModel.findByIdAndUpdate(id, {
         $set: { userAdress: orderDto.orderAdress },
       });
-    return newOrder.save();
+    return savedOrder;
   }
 
-  async updateOrderStatus(newStatus: orderStatus, orderId: string) {
+  async updateOrderStatus(newStatus: string, orderId: string) {
     // const findUser = await this.userModel.findById(userid);
     // if (!findUser) throw new HttpException('User not found', 404);
 
     // if (findUser.userCart.items.length === 0)
     //   throw new HttpException('Cart is empty', 400);
-
+    console.log(newStatus);
+    console.log(orderStatus.awaiting_shipment);
     let isActiveFlag = true;
     if (newStatus === orderStatus.shipped) isActiveFlag = false;
+    let updatedOrder;
+    switch (newStatus) {
+      case orderStatus.awaiting_shipment:
+        updatedOrder = await this.orderModel.findByIdAndUpdate(
+          orderId,
+          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+          { new: true },
+        );
 
-    const updatedOrder = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-      { new: true },
-    );
+        return updatedOrder;
 
-    return updatedOrder;
+      case orderStatus.pending:
+        updatedOrder = await this.orderModel.findByIdAndUpdate(
+          orderId,
+          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+          { new: true },
+        );
+
+        return updatedOrder;
+
+      case orderStatus.shipped:
+        isActiveFlag = false;
+        updatedOrder = await this.orderModel.findByIdAndUpdate(
+          orderId,
+          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+          { new: true },
+        );
+
+        return updatedOrder;
+
+      default:
+        throw new HttpException('Wrong status', 404);
+    }
   }
 
   async getUserOrders(userid: string) {
