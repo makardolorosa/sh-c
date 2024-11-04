@@ -13,7 +13,7 @@ import {
 import { OrderService } from './order.service';
 import { createOrderDto } from './dtos/create-order.dto';
 import mongoose from 'mongoose';
-//import { orderStatus } from 'src/enums/enum.order.status';
+import { updateOrderStatusDto } from './dtos/update-order.dto';
 
 @Controller('order')
 export class OrderController {
@@ -53,7 +53,7 @@ export class OrderController {
   @UsePipes(new ValidationPipe())
   async updateOrderstatus(
     @Param('orderId') orderId: string,
-    @Body() newStatus: string,
+    @Body() newStatus: updateOrderStatusDto,
   ) {
     const isValid = mongoose.Types.ObjectId.isValid(orderId);
     if (!isValid) throw new HttpException('Invalid ID', 400);

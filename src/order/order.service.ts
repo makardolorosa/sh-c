@@ -7,6 +7,7 @@ import { createOrderDto } from './dtos/create-order.dto';
 import { Order } from './order.schema';
 import { orderStatus } from 'src/enums/enum.order.status';
 import { itemDto } from 'src/cart/dtos/cart-item.dto';
+import { updateOrderStatusDto } from './dtos/update-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -61,50 +62,59 @@ export class OrderService {
     return savedOrder;
   }
 
-  async updateOrderStatus(newStatus: string, orderId: string) {
-    // const findUser = await this.userModel.findById(userid);
-    // if (!findUser) throw new HttpException('User not found', 404);
+  async updateOrderStatus(gotStatus: updateOrderStatusDto, orderId: string) {
+    const findOrder = await this.orderModel.findById(orderId);
+    if (!findOrder) throw new HttpException('Order not found', 404);
 
-    // if (findUser.userCart.items.length === 0)
-    //   throw new HttpException('Cart is empty', 400);
-    console.log(newStatus);
-    console.log(orderStatus.awaiting_shipment);
     let isActiveFlag = true;
-    if (newStatus === orderStatus.shipped) isActiveFlag = false;
-    let updatedOrder;
-    switch (newStatus) {
-      case orderStatus.awaiting_shipment:
-        updatedOrder = await this.orderModel.findByIdAndUpdate(
-          orderId,
-          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-          { new: true },
-        );
+    if (gotStatus.newStatus === orderStatus.shipped) isActiveFlag = false;
 
-        return updatedOrder;
-
-      case orderStatus.pending:
-        updatedOrder = await this.orderModel.findByIdAndUpdate(
-          orderId,
-          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-          { new: true },
-        );
-
-        return updatedOrder;
-
-      case orderStatus.shipped:
-        isActiveFlag = false;
-        updatedOrder = await this.orderModel.findByIdAndUpdate(
-          orderId,
-          { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-          { new: true },
-        );
-
-        return updatedOrder;
-
-      default:
-        throw new HttpException('Wrong status', 404);
-    }
+    const updatedOrder = await this.orderModel.findByIdAndUpdate(
+      orderId,
+      { orderCurrentStatus: gotStatus.newStatus, isActive: isActiveFlag },
+      { new: true },
+    );
+    return updatedOrder;
   }
+  // if (findUser.userCart.items.length === 0)
+  //   throw new HttpException('Cart is empty', 400);
+  // console.log(newStatus);
+  // console.log(orderStatus.awaiting_shipment);
+  // let isActiveFlag = true;
+  // if (newStatus === orderStatus.shipped) isActiveFlag = false;
+  // let updatedOrder;
+  // switch (newStatus) {
+  //   case orderStatus.awaiting_shipment:
+  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
+  //       orderId,
+  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+  //       { new: true },
+  //     );
+
+  //     return updatedOrder;
+
+  //   case orderStatus.pending:
+  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
+  //       orderId,
+  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+  //       { new: true },
+  //     );
+
+  //     return updatedOrder;
+
+  //   case orderStatus.shipped:
+  //     isActiveFlag = false;
+  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
+  //       orderId,
+  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
+  //       { new: true },
+  //     );
+
+  //     return updatedOrder;
+
+  //   default:
+  //     throw new HttpException('Wrong status', 404);
+  // }
 
   async getUserOrders(userid: string) {
     const findUser = await this.orderModel.findById(userid);
