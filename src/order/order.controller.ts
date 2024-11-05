@@ -61,7 +61,7 @@ export class OrderController {
     return this.orderService.updateOrderStatus(newStatus, orderId);
   }
 
-  @Delete('/orderId/:orderId')
+  @Delete('/deleteOrder/:orderId')
   @UsePipes(new ValidationPipe())
   async deleteOrder(@Param('orderId') orderId: string) {
     const isValid = mongoose.Types.ObjectId.isValid(orderId);

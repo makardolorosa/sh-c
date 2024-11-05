@@ -19,7 +19,7 @@ export class Order {
   orderCurrentStatus: orderStatus;
 
   @Prop({ required: true })
-  orderAdress: string;
+  orderAddress: string;
 
   @Prop({ type: Boolean, default: true })
   isActive: boolean;

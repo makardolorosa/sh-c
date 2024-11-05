@@ -21,28 +21,23 @@ export class OrderService {
     const findUser = await this.userModel.findById(id);
     if (!findUser) throw new HttpException('User not found', 404);
 
-    // if (findUser.userCart.items.length === 0)
-    // if ((await this.cartModel.findOne({ userId: id })).items.length === 0)
-    //   throw new HttpException('Cart is empty', 403);
-    console.log(findUser);
+    const findCart = await this.cartModel.findOne({ userId: id });
+    if (findCart.items.length === 0)
+      throw new HttpException('Cart is empty', 403);
+
     const orderCart = await this.cartModel.findById(findUser.userCart);
-    console.log(orderCart);
     const orderItemsList = orderCart.items;
-    console.log(orderItemsList);
-    const orderTotalprice = orderCart.totalPrice;
+    const orderTotalPrice = orderCart.totalPrice;
 
     const newOrder = await new this.orderModel({
       userId: id,
-      orderAdress: orderDto.orderAdress,
+      orderAdress: orderDto.orderAddress,
       items: orderItemsList,
-      orderTotalPrice: orderTotalprice,
+      orderTotalPrice: orderTotalPrice,
       orderCurrentStatus: orderStatus.pending,
       isActive: true,
     });
-
     const savedOrder = await newOrder.save();
-
-    //newOrder.updateOne({ $set: { items: orderItemsList } });
 
     await this.userModel.findByIdAndUpdate(
       id,
@@ -55,9 +50,9 @@ export class OrderService {
       { $set: { items: new itemDto(), totalPrice: 0 } },
     );
 
-    if (orderDto.saveAdress)
+    if (orderDto.saveAddress)
       await this.userModel.findByIdAndUpdate(id, {
-        $set: { userAdress: orderDto.orderAdress },
+        $set: { userAddress: orderDto.orderAddress },
       });
     return savedOrder;
   }
@@ -76,45 +71,6 @@ export class OrderService {
     );
     return updatedOrder;
   }
-  // if (findUser.userCart.items.length === 0)
-  //   throw new HttpException('Cart is empty', 400);
-  // console.log(newStatus);
-  // console.log(orderStatus.awaiting_shipment);
-  // let isActiveFlag = true;
-  // if (newStatus === orderStatus.shipped) isActiveFlag = false;
-  // let updatedOrder;
-  // switch (newStatus) {
-  //   case orderStatus.awaiting_shipment:
-  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
-  //       orderId,
-  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-  //       { new: true },
-  //     );
-
-  //     return updatedOrder;
-
-  //   case orderStatus.pending:
-  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
-  //       orderId,
-  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-  //       { new: true },
-  //     );
-
-  //     return updatedOrder;
-
-  //   case orderStatus.shipped:
-  //     isActiveFlag = false;
-  //     updatedOrder = await this.orderModel.findByIdAndUpdate(
-  //       orderId,
-  //       { $set: { orderStatus: newStatus, isActive: isActiveFlag } },
-  //       { new: true },
-  //     );
-
-  //     return updatedOrder;
-
-  //   default:
-  //     throw new HttpException('Wrong status', 404);
-  // }
 
   async getUserOrders(userid: string) {
     const findUser = await this.orderModel.findById(userid);
@@ -126,14 +82,14 @@ export class OrderService {
 
   async getOrderById(orderId: string) {
     const findOrder = await this.orderModel.findById(orderId);
-    if (!findOrder) throw new HttpException('User not found', 404);
+    if (!findOrder) throw new HttpException('Order not found', 404);
 
     return findOrder;
   }
 
   async deleteOrder(orderId: string) {
     const findOrder = await this.orderModel.findById(orderId);
-    if (!findOrder) throw new HttpException('User not found', 404);
+    if (!findOrder) throw new HttpException('Order not found', 404);
 
     const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
     return deletedOrder;

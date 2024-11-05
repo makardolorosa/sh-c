@@ -38,19 +38,18 @@ export class CartService {
 
   async updateCart(userId: string, item: itemDto) {
     const tempItems = (await this.cartModel.findOne({ userId: userId })).items;
-    console.log(tempItems);
     if (!tempItems) throw new HttpException('User not found', 404);
 
     const itemIndex = tempItems.findIndex(
       (exactItem) => exactItem.productArticle === item.productArticle,
     );
-    console.log(itemIndex);
     if (
       !(await this.itemModel.findOne({
         productArticle: item.productArticle,
       }))
     )
       throw new HttpException('Item article not found', 403);
+
     const oldSum = (await this.cartModel.findOne({ userId: userId }))
       .totalPrice;
 
@@ -102,43 +101,6 @@ export class CartService {
       }
     }
 
-    // if (itemIndex !== -1) {
-    //   tempItems[itemIndex].quantity += item.quantity;
-    //   newSum =
-    //     oldSum +
-    //     item.quantity *
-    //       (
-    //         await this.itemModel.findOne({
-    //           productArticle: item.productArticle,
-    //         })
-    //       ).itemPrice;
-
-    //   if (tempItems[itemIndex].quantity < 0) {
-    //     const tempQuant = tempItems[itemIndex].quantity;
-    //     newSum =
-    //       oldSum -
-    //       tempQuant *
-    //         (
-    //           await this.itemModel.findOne({
-    //             productArticle: item.productArticle,
-    //           })
-    //         ).itemPrice;
-    //     tempItems[itemIndex].quantity = 0;
-    //   }
-    // } else {
-    //   if (item.quantity >= 0) {
-    //     tempItems.push(item);
-    //     newSum =
-    //       oldSum +
-    //       item.quantity *
-    //         (
-    //           await this.itemModel.findOne({
-    //             productArticle: item.productArticle,
-    //           })
-    //         ).itemPrice;
-    //   }
-    // }
-
     const result = tempItems.filter(
       (existedItems) => existedItems.quantity > 0,
     );
@@ -159,8 +121,6 @@ export class CartService {
   }
 
   async deleteCart(userid: string) {
-    console.log(userid);
-
     await this.cartModel.findOneAndDelete({
       userId: userid,
     });

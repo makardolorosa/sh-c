@@ -3,9 +3,9 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class createOrderDto {
   @IsNotEmpty()
   @IsString()
-  orderAdress: string;
+  orderAddress: string;
 
   @IsBoolean()
   @IsOptional()
-  saveAdress?: boolean;
+  saveAddress?: boolean;
 }

@@ -24,7 +24,7 @@ export class User {
   // @Prop()
   // id: string;
   @Prop({ required: false })
-  userAdress?: string;
+  userAddress?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
