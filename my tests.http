@@ -1,0 +1,96 @@
+GET http://localhost:3000/users
+
+###
+POST http://localhost:3000/item
+[
+  {
+    "productArticle": "A12345",
+    "itemName": "Organic Apple",
+    "itemDescription": "Fresh and juicy organic apples from local farms.",
+    "itemCategory": "Grocery",
+    "itemPrice": 3.99
+  },
+  {
+    "productArticle": "B67890",
+    "itemName": "Cotton T-Shirt",
+    "itemDescription": "100% cotton t-shirt available in multiple colors.",
+    "itemCategory": "Clothing",
+    "itemPrice": 15.99
+  },
+  {
+    "productArticle": "C13579",
+    "itemName": "Stainless Steel Knife Set",
+    "itemDescription": "High-quality stainless steel kitchen knives, set of 5.",
+    "itemCategory": "Home",
+    "itemPrice": 49.99
+  },
+  {
+    "productArticle": "D24680",
+    "itemName": "Wooden Dining Table",
+    "itemDescription": "Elegant wooden dining table made from oak wood.",
+    "itemCategory": "Furniture",
+    "itemPrice": 299.99
+  },
+  {
+    "productArticle": "E11223",
+    "itemName": "Lego Building Set",
+    "itemDescription": "Creative Lego set for children aged 5 and above.",
+    "itemCategory": "Toys",
+    "itemPrice": 39.99
+  }
+]
+###
+DELETE http://localhost:3000/cart/66fc7428247646d3a1450ad1
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "User1022",
+  "name": "UserTest1022",
+  "password": "UserPassword1022"
+}
+###
+POST http://localhost:3000/cart
+Content-Type: application/json
+{ 
+  "userId": "67184372bffe301ffd63f4be"
+}
+###
+GET http://localhost:3000/cart/67184372bffe301ffd63f4be
+
+###
+GET http://localhost:3000/item
+
+###
+POST http://localhost:3000/order/67184372bffe301ffd63f4be
+Content-Type: application/json
+{
+  "orderAdress": "Canada, ON, Hamilton",
+  "saveAdress": true
+}
+###
+PATCH http://localhost:3000/cart/67184372bffe301ffd63f4be
+Content-Type: application/json
+{ 
+  "productArticle" : "E11223",
+  "quantity" : 2
+}
+###
+
+PATCH   http://localhost:3000/order/updateOrder/67229debf51ed14c28060688
+Content-Type: application/json
+
+{
+    "newStatus": "Pending (Customer started the checkout process but did not complete it.)"
+}
+###
+
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "User1022",
+    "password": "UserPassword1022"
+}

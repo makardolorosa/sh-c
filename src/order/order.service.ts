@@ -31,7 +31,7 @@ export class OrderService {
 
     const newOrder = await new this.orderModel({
       userId: id,
-      orderAdress: orderDto.orderAddress,
+      orderAddress: orderDto.orderAddress,
       items: orderItemsList,
       orderTotalPrice: orderTotalPrice,
       orderCurrentStatus: orderStatus.pending,
