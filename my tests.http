@@ -2,6 +2,7 @@ GET http://localhost:3000/users
 
 ###
 POST http://localhost:3000/item
+
 [
   {
     "productArticle": "A12345",
@@ -66,6 +67,7 @@ GET http://localhost:3000/item
 ###
 POST http://localhost:3000/order/67184372bffe301ffd63f4be
 Content-Type: application/json
+
 {
   "orderAdress": "Canada, ON, Hamilton",
   "saveAdress": true
@@ -73,6 +75,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/cart/67184372bffe301ffd63f4be
 Content-Type: application/json
+
 { 
   "productArticle" : "E11223",
   "quantity" : 2
@@ -94,3 +97,8 @@ Content-Type: application/json
     "email": "User1022",
     "password": "UserPassword1022"
 }
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE4NDM3MmJmZmUzMDFmZmQ2M2Y0YmUiLCJlbWFpbCI6IlVzZXIxMDIyIiwiaWF0IjoxNzMxMjAzNTU5LCJleHAiOjE3MzEyMDUzNTl9.o4Cnr7eUchbqyM6oApAPnaN-Myxnb7MOcvw4d3u4N7E
+
+###
+GET http://localhost:3000/auth/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE4NDM3MmJmZmUzMDFmZmQ2M2Y0YmUiLCJlbWFpbCI6IlVzZXIxMDIyIiwiaWF0IjoxNzMxNDU0MDA3LCJleHAiOjE3MzE0NTU4MDd9.tXXc4wecdn-2oqyn-_fF6A8-omny9eB18IEGofHsFOA
