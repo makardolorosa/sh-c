@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,7 +15,9 @@ import { OrderService } from './order.service';
 import { createOrderDto } from './dtos/create-order.dto';
 import mongoose from 'mongoose';
 import { updateOrderStatusDto } from './dtos/update-order.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('order')
 export class OrderController {
   constructor(private orderService: OrderService) {}

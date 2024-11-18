@@ -75,6 +75,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/cart/67184372bffe301ffd63f4be
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE4NDM3MmJmZmUzMDFmZmQ2M2Y0YmUiLCJlbWFpbCI6IlVzZXIxMDIyIiwiaWF0IjoxNzMxOTY3OTUyLCJleHAiOjE3MzE5Njk3NTJ9.Qq79Tp5Ij6lTNQASYkuy_UiAL6pnE0eghACN3efaOVI
 
 { 
   "productArticle" : "E11223",
@@ -101,4 +102,6 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/auth/status
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE4NDM3MmJmZmUzMDFmZmQ2M2Y0YmUiLCJlbWFpbCI6IlVzZXIxMDIyIiwiaWF0IjoxNzMxNDU0MDA3LCJleHAiOjE3MzE0NTU4MDd9.tXXc4wecdn-2oqyn-_fF6A8-omny9eB18IEGofHsFOA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE4NDM3MmJmZmUzMDFmZmQ2M2Y0YmUiLCJlbWFpbCI6IlVzZXIxMDIyIiwiaWF0IjoxNzMxOTY3OTUyLCJleHAiOjE3MzE5Njk3NTJ9.Qq79Tp5Ij6lTNQASYkuy_UiAL6pnE0eghACN3efaOVI
+
+

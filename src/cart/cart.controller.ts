@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,7 +15,9 @@ import { CartService } from './cart.service';
 import { createCartdto } from './dtos/create-cart.dto';
 import { itemDto } from './dtos/cart-item.dto';
 import mongoose from 'mongoose';
+import { JwtAuthGuard } from 'src/guards/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('cart')
 export class CartController {
   constructor(private cartService: CartService) {}

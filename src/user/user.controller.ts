@@ -6,12 +6,14 @@ import {
   HttpException,
   Param,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { createUserdto } from 'src/user/dtos/user.dto';
 import mongoose from 'mongoose';
+import { JwtAuthGuard } from 'src/guards/jwt-guard';
 //import { createUserdto } from 'src/dtos/user.dto';
 
 @Controller('users')
@@ -25,11 +27,13 @@ export class UserController {
     return this.usersService.createUser(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   getUsers() {
     return this.usersService.getsUsers();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @UsePipes(new ValidationPipe())
   async getUserById(@Param('id') id: string) {
@@ -40,6 +44,7 @@ export class UserController {
     return findUser;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @UsePipes(new ValidationPipe())
   async deleteUser(@Param('id') id: string) {
